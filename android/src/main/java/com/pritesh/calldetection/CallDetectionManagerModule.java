@@ -1,12 +1,9 @@
 package com.pritesh.calldetection;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
-import android.os.Bundle;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -17,8 +14,7 @@ import java.util.Map;
 
 public class CallDetectionManagerModule
         extends ReactContextBaseJavaModule
-        implements Application.ActivityLifecycleCallbacks,
-        CallDetectionPhoneStateListener.PhoneCallStateUpdate {
+        implements CallDetectionPhoneStateListener.PhoneCallStateUpdate {
 
     private boolean wasAppInOffHook = false;
     private boolean wasAppInRinging = false;
@@ -40,11 +36,6 @@ public class CallDetectionManagerModule
 
     @ReactMethod
     public void startListener() {
-        if (activity == null) {
-            activity = getCurrentActivity();
-            activity.getApplication().registerActivityLifecycleCallbacks(this);
-        }
-
         telephonyManager = (TelephonyManager) this.reactContext.getSystemService(
                 Context.TELEPHONY_SERVICE);
         callDetectionPhoneStateListener = new CallDetectionPhoneStateListener(this);
@@ -73,43 +64,7 @@ public class CallDetectionManagerModule
         map.put("Missed", "Missed");
         return map;
     }
-
-    // Activity Lifecycle Methods
-    @Override
-    public void onActivityCreated(Activity activity, Bundle savedInstanceType) {
-
-    }
-
-    @Override
-    public void onActivityStarted(Activity activity) {
-
-    }
-
-    @Override
-    public void onActivityResumed(Activity activity) {
-
-    }
-
-    @Override
-    public void onActivityPaused(Activity activity) {
-
-    }
-
-    @Override
-    public void onActivityStopped(Activity activity) {
-
-    }
-
-    @Override
-    public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-
-    }
-
-    @Override
-    public void onActivityDestroyed(Activity activity) {
-
-    }
-
+    
     @Override
     public void phoneCallStateUpdated(int state, String phoneNumber) {
         jsModule = this.reactContext.getJSModule(CallStateUpdateActionModule.class);
