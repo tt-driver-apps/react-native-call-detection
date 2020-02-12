@@ -2,6 +2,7 @@ package com.pritesh.calldetection;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Build;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 
@@ -36,6 +37,10 @@ public class CallDetectionManagerModule
 
     @ReactMethod
     public void startListener() {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            // This is to avoid adding android.permission.READ_PHONE_STATE
+            return;
+        }
         telephonyManager = (TelephonyManager) this.reactContext.getSystemService(
                 Context.TELEPHONY_SERVICE);
         callDetectionPhoneStateListener = new CallDetectionPhoneStateListener(this);
@@ -46,6 +51,10 @@ public class CallDetectionManagerModule
 
     @ReactMethod
     public void stopListener() {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            // This is to avoid adding android.permission.READ_PHONE_STATE
+            return;
+        }
         telephonyManager.listen(callDetectionPhoneStateListener,
                 PhoneStateListener.LISTEN_NONE);
         telephonyManager = null;
@@ -64,7 +73,7 @@ public class CallDetectionManagerModule
         map.put("Missed", "Missed");
         return map;
     }
-    
+
     @Override
     public void phoneCallStateUpdated(int state, String phoneNumber) {
         jsModule = this.reactContext.getJSModule(CallStateUpdateActionModule.class);
